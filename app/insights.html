@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Insights — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="loading">
+<div class="app" id="app">
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="skeleton"><div class="tiles"><div class="tile" style="height:110px"></div><div class="tile" style="height:110px"></div><div class="tile" style="height:110px"></div><div class="tile" style="height:110px"></div></div><div class="card" style="height:300px"></div></div>
+
+    <div class="content">
+      <div class="tiles" id="tiles"></div>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="card-head"><div><h2>Focus hours</h2><div class="sub">Time in deep-work blocks this week</div></div></div>
+          <div class="stat"><b id="focus-total">0</b><span>h this week</span></div>
+          <svg class="chart" id="focus-chart" viewBox="0 0 400 150" preserveAspectRatio="none" aria-label="Focus hours by day"></svg>
+        </section>
+        <section class="card">
+          <div class="card-head"><div><h2>Sleep</h2><div class="sub">How you rated each night</div></div></div>
+          <div class="stat"><b id="sleep-avg">—</b><span>average this week</span></div>
+          <svg class="line-chart" id="sleep-chart" viewBox="0 0 400 150" preserveAspectRatio="none" aria-label="Sleep quality by day"></svg>
+        </section>
+      </div>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="card-head"><div><h2>Tasks</h2><div class="sub">Completion across all lists</div></div></div>
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="50"/><circle class="fg" id="ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/><text x="60" y="66" text-anchor="middle" id="ring-text">0%</text></svg>
+            <div class="ring-meta" id="ring-meta"></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div><h2>What stands out</h2><div class="sub">Patterns from this week</div></div></div>
+          <div class="insight-list" id="insights"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/shell.js"></script>
+<script src="../assets/js/pages/insights.js"></script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Daybook — your whole day, one calm screen</title>
+  <meta name="description" content="Daybook pulls your schedule, tasks and daily check-ins into a single view that always knows what's happening right now." />
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/landing.css" />
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Daybook home">
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>
+      Daybook
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#product">Product</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <span class="spacer"></span>
+    <div class="nav-actions">
+      <button class="icon-btn plain" id="theme-toggle" aria-label="Toggle theme"></button>
+      <a class="btn ghost" href="login.html">Log in</a>
+      <a class="btn primary" href="signup.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero wrap">
+    <h1>Your whole day, on one calm screen.</h1>
+    <p>Daybook pulls your schedule, tasks and daily check-ins into a single view that always knows what’s happening right now — and what comes next.</p>
+    <div class="hero-actions">
+      <a class="btn primary lg" href="signup.html">Start for free</a>
+      <a class="btn secondary lg" href="#how">See how it works</a>
+    </div>
+    <div class="note">Free plan. No card needed. Works on web and phone.</div>
+  </section>
+
+  <!-- Interactive demo -->
+  <section class="demo wrap" id="product" aria-label="Interactive demo">
+    <div class="demo-frame">
+      <div class="demo-bar"><i></i><i></i><i></i><span class="url">app.daybook.so/today</span></div>
+      <div class="demo-body">
+        <div class="demo-left">
+          <div class="now" id="demo-now">
+            <div class="label"><span class="dot"></span><span>Happening now</span></div>
+            <div class="title">Deep work</div>
+            <div class="meta">10:30 AM – 12:30 PM</div>
+            <div class="bar"><i></i></div>
+            <div class="foot"><span>— left</span><span>Next</span></div>
+          </div>
+          <div class="rhead">
+            <span>Today, 6am to 11pm</span>
+            <span class="spacer"></span>
+            <div class="ribbon-legend">
+              <span><i style="background:var(--accent-soft)"></i>Plans</span>
+              <span><i style="background:var(--ink)"></i>Focus</span>
+              <span><i style="background:var(--warn-soft)"></i>Body</span>
+              <span><i style="background:var(--good-soft)"></i>Done</span>
+            </div>
+          </div>
+          <div class="ribbon-track" id="demo-ribbon"></div>
+          <div class="ribbon-foot"></div>
+
+          <div class="scrub">
+            <div class="row">
+              <span>Scrub through the day</span>
+              <span><b id="scrub-time">10:30 AM</b> <button class="live-btn" id="scrub-live" style="margin-left:8px">Jump to now</button></span>
+            </div>
+            <input class="range" id="scrub" type="range" min="360" max="1380" step="5" value="630" aria-label="Time of day" />
+          </div>
+        </div>
+        <div class="demo-right">
+          <h3>My tasks</h3>
+          <div class="tasks" id="demo-tasks"></div>
+          <div class="checkin">
+            <h3>How was your sleep?</h3>
+            <div class="dials" id="demo-dials">
+              <button class="dial" aria-pressed="false" data-v="Rough" aria-label="Rough"><svg viewBox="0 0 24 24"><path d="M4 15c3-6 13-6 16 0"/></svg></button>
+              <button class="dial" aria-pressed="false" data-v="Okay" aria-label="Okay"><svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg></button>
+              <button class="dial" aria-pressed="true" data-v="Good" aria-label="Good"><svg viewBox="0 0 24 24"><path d="M4 9c3 6 13 6 16 0"/></svg></button>
+              <button class="dial" aria-pressed="false" data-v="Great" aria-label="Great"><svg viewBox="0 0 24 24"><path d="M4 8c3 8 13 8 16 0"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-caption">
+      <span>This is the real app. Drag the slider, tick a task, tap a dial.</span>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section wrap">
+    <div class="section-head reveal">
+      <h2>Built around the one question you ask all day: what now?</h2>
+      <p>Most planners show you everything. Daybook shows you the present, keeps the rest one glance away, and gets out of the way.</p>
+    </div>
+    <div class="bento">
+      <article class="feat wide reveal">
+        <div class="feat-visual">
+          <div class="mini-now"><div class="now" id="feat-now">
+            <div class="label"><span class="dot"></span><span>Happening now</span></div>
+            <div class="title">Design crit</div>
+            <div class="meta">9:00 AM – 10:00 AM</div>
+            <div class="bar"><i></i></div>
+            <div class="foot"><span>—</span><span>—</span></div>
+          </div></div>
+        </div>
+        <h3>The present, always on top</h3>
+        <p>A live block tells you what’s happening, how far in you are, and what comes next. No digging through a calendar.</p>
+      </article>
+      <article class="feat wide reveal">
+        <div class="feat-visual"><div class="mini-tasks" id="feat-tasks"></div></div>
+        <h3>Tasks that move</h3>
+        <p>Tap once to start, tap again to finish. Done tasks slide out of your way and into your week’s history.</p>
+      </article>
+      <article class="feat reveal">
+        <div class="feat-visual">
+          <div class="mini-pal">
+            <div class="in"><svg class="icon sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span class="typed" id="typed"></span><span class="caret"></span></div>
+            <div class="r sel"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>New task<small>N</small></div>
+            <div class="r"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>Insights<small>4</small></div>
+            <div class="r"><span class="ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A6 6 0 0 1 12 3z"/></svg></span>Dark theme<small>T</small></div>
+          </div>
+        </div>
+        <h3>Do anything from the keyboard</h3>
+        <p>Press <span class="kbd">⌘K</span> anywhere — even on this page — to add, jump, search or switch themes.</p>
+      </article>
+      <article class="feat reveal">
+        <div class="feat-visual"><div class="mini-week" id="feat-week"></div></div>
+        <h3>See the shape of your week</h3>
+        <p>Focus hours, sleep and finished tasks, charted without a spreadsheet. Notice patterns before they become problems.</p>
+      </article>
+      <article class="feat reveal">
+        <div class="feat-visual">
+          <div class="devices">
+            <div class="dev-mac"><div class="dev-line a"></div><div class="dev-line b"></div><div class="dev-block"></div></div>
+            <div class="dev-phone"><div class="dev-line a"></div><div class="dev-line b"></div><div class="dev-block"></div></div>
+          </div>
+        </div>
+        <h3>Same app on every screen</h3>
+        <p>A full workspace on your laptop, a thumb-friendly version on your phone. Both are the real thing, not a cut-down view.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section wrap" id="how">
+    <div class="section-head reveal">
+      <h2>Up and running in about a minute.</h2>
+      <p>Three steps, then Daybook does the remembering.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="num">1</div><h3>Tell it what matters</h3><p>Pick what you want to keep an eye on — focus time, sleep, movement, meetings. Nothing else shows up.</p></div>
+      <div class="step reveal"><div class="num">2</div><h3>Drop in your day</h3><p>Add events and tasks in plain words. “Stand-up at 2” is enough. Or press N and type.</p></div>
+      <div class="step reveal"><div class="num">3</div><h3>Open it when you wonder “what now?”</h3><p>The live view answers instantly. One tap logs a check-in. The week builds itself from there.</p></div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section wrap" id="pricing">
+    <div class="section-head center reveal">
+      <h2>Simple pricing, no surprises.</h2>
+      <p>Start free and stay free as long as you like. Upgrade when you want more.</p>
+    </div>
+    <div class="pricing-toggle reveal">
+      <div class="seg" id="billing">
+        <button aria-pressed="true" data-b="monthly">Monthly</button>
+        <button aria-pressed="false" data-b="yearly">Yearly <span class="save">save 33%</span></button>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <div class="name">Free</div>
+        <div class="price"><b>$0</b><span>forever</span></div>
+        <div class="desc">Everything you need for one calm day at a time.</div>
+        <ul>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Live day view and tasks</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Sleep and focus check-ins</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Web and phone</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>7-day history</li>
+        </ul>
+        <a class="btn secondary block" href="signup.html">Start for free</a>
+      </div>
+      <div class="plan featured reveal">
+        <div class="name">Plus <span class="tag">Most popular</span></div>
+        <div class="price"><b data-m="$6" data-y="$4">$6</b><span>per month</span></div>
+        <div class="desc">For people who want the full picture of their weeks and months.</div>
+        <ul>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Everything in Free</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Unlimited history and trends</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Calendar sync</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Custom check-ins</li>
+        </ul>
+        <a class="btn primary block" href="signup.html">Get Plus</a>
+      </div>
+      <div class="plan reveal">
+        <div class="name">Team</div>
+        <div class="price"><b data-m="$12" data-y="$8">$12</b><span>per person, per month</span></div>
+        <div class="desc">Shared schedules and quiet hours for small teams.</div>
+        <ul>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Everything in Plus</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Shared availability</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Team focus blocks</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Priority support</li>
+        </ul>
+        <a class="btn secondary block" href="signup.html">Start a team</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quotes -->
+  <section class="section wrap">
+    <div class="quotes">
+      <div class="quote reveal"><p>“I stopped opening my calendar in the morning. Daybook just tells me where the day is.”</p><div class="who"><span class="avatar sm" style="background:linear-gradient(140deg,#7C9CFF,#2E5BFF)">A</span><div><b>Anita R.</b><span>Product designer</span></div></div></div>
+      <div class="quote reveal"><p>“The sleep dials are the first check-in I’ve actually kept up for more than a week.”</p><div class="who"><span class="avatar sm" style="background:linear-gradient(140deg,#6EE7B7,#1FA463)">J</span><div><b>Jonas K.</b><span>Engineer</span></div></div></div>
+      <div class="quote reveal"><p>“It looks like nothing, which is exactly why I look at it twenty times a day.”</p><div class="who"><span class="avatar sm">P</span><div><b>Priya S.</b><span>Founder</span></div></div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wrap">
+    <div class="cta reveal">
+      <div class="glow"></div>
+      <h2>Start your first calm day.</h2>
+      <p>Set up in a minute. Your data stays on your device on the free plan.</p>
+      <div class="hero-actions">
+        <a class="btn primary lg" href="signup.html">Create your Daybook</a>
+        <a class="btn ghost lg" href="app/index.html?demo=1">Try the demo</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer wrap">
+  <div class="top">
+    <div>
+      <a class="logo" href="index.html"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>Daybook</a>
+      <p class="muted small" style="margin-top:12px;max-width:30ch">Your whole day, on one calm screen.</p>
+    </div>
+    <div class="cols">
+      <div class="col"><b>Product</b><a href="#product">Overview</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="app/index.html?demo=1">Demo</a></div>
+      <div class="col"><b>Account</b><a href="login.html">Log in</a><a href="signup.html">Sign up</a><a href="app/settings.html">Settings</a></div>
+      <div class="col"><b>Company</b><a href="#">About</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+  <div class="bottom"><span>© 2026 Daybook</span><span>Made with care for people who like quiet screens.</span></div>
+</footer>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/landing.js"></script>
+</body>
+</html>

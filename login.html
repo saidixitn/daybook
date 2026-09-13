@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Log in — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+</head>
+<body>
+<div class="auth">
+  <aside class="auth-visual">
+    <div class="glow"></div>
+    <a class="logo" href="index.html"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>Daybook</a>
+    <div class="body">
+      <h2>Pick up exactly where your day is.</h2>
+      <div class="panel">
+        <div class="now" id="vis-now">
+          <div class="label"><span class="dot"></span><span>Happening now</span></div>
+          <div class="title">Deep work</div>
+          <div class="meta">10:30 AM – 12:30 PM</div>
+          <div class="bar"><i></i></div>
+          <div class="foot"><span>—</span><span>—</span></div>
+        </div>
+        <div class="ribbon-track" id="vis-ribbon"></div>
+        <div class="ribbon-foot"></div>
+      </div>
+    </div>
+    <div class="foot-note">Free plan keeps everything on your device.</div>
+  </aside>
+
+  <main class="auth-form">
+    <a class="btn ghost sm back" href="index.html">← Back</a>
+    <div class="auth-card">
+      <a class="logo mobile-logo" href="index.html"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>Daybook</a>
+      <h1>Welcome back</h1>
+      <p class="lead">Log in to open today.</p>
+
+      <div class="social">
+        <button class="btn secondary" data-social="Google"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Continue with Google</button>
+        <button class="btn secondary" data-social="Apple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 17h4"/></svg>Continue with Apple</button>
+      </div>
+      <div class="or">or with email</div>
+
+      <form id="form" novalidate>
+        <div class="field" data-f="email">
+          <label for="email">Email</label>
+          <input class="input" id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+          <span class="error">Enter a valid email address.</span>
+        </div>
+        <div class="field" data-f="pw">
+          <div class="row"><label for="pw">Password</label><span class="spacer"></span><a href="#" class="small muted">Forgot?</a></div>
+          <div class="pw-wrap">
+            <input class="input" id="pw" type="password" placeholder="Your password" autocomplete="current-password" />
+            <button type="button" class="icon-btn plain eye" id="eye" aria-label="Show password"></button>
+          </div>
+          <span class="error">Enter your password.</span>
+        </div>
+        <button class="btn primary" type="submit" id="submit">Log in</button>
+      </form>
+      <p class="alt">New here? <a href="signup.html">Create an account</a></p>
+      <p class="alt"><a href="app/index.html?demo=1" class="muted" style="font-weight:400">Or try the demo without an account</a></p>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/auth.js"></script>
+</body>
+</html>

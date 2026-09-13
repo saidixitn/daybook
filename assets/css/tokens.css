@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap');
+
+:root {
+  /* Surfaces */
+  --bg: #F6F6F3;
+  --surface: #FFFFFF;
+  --surface-2: #F1F1EE;
+  --sunk: #E7E7E2;
+  --line: #E4E4DF;
+  --line-strong: #CFCFC9;
+
+  /* Ink */
+  --ink: #1A1A18;
+  --ink-2: #6A6A65;
+  --ink-3: #A2A29C;
+  --on-ink: #F6F6F3;
+
+  /* Semantic */
+  --accent: #2E5BFF;
+  --accent-soft: #E7ECFF;
+  --accent-ink: #1E3FBF;
+  --good: #1FA463;
+  --good-soft: #E1F4EA;
+  --warn: #F26B3A;
+  --warn-soft: #FDE9E1;
+
+  /* Shape */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* Elevation */
+  --shadow-1: 0 1px 2px rgba(20,20,18,.04), 0 8px 24px -12px rgba(20,20,18,.14);
+  --shadow-2: 0 2px 4px rgba(20,20,18,.05), 0 24px 48px -16px rgba(20,20,18,.22);
+  --shadow-3: 0 30px 80px -20px rgba(20,20,18,.4);
+
+  /* Type */
+  --font: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 26px;
+  --fs-2xl: 34px;
+  --fs-3xl: 48px;
+  --fs-4xl: 64px;
+
+  /* Motion */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --t-fast: .15s;
+  --t-base: .25s;
+  --t-slow: .45s;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1A1A19;
+  --surface-2: #222220;
+  --sunk: #2A2A28;
+  --line: #2C2C2A;
+  --line-strong: #3C3C39;
+
+  --ink: #F2F2EE;
+  --ink-2: #9A9A94;
+  --ink-3: #66665F;
+  --on-ink: #111110;
+
+  --accent: #6288FF;
+  --accent-soft: #1C2750;
+  --accent-ink: #9DB4FF;
+  --good: #3CC684;
+  --good-soft: #143224;
+  --warn: #FF7E55;
+  --warn-soft: #3E2117;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 24px 48px -16px rgba(0,0,0,.6);
+  --shadow-3: 0 30px 80px -20px rgba(0,0,0,.8);
+
+  color-scheme: dark;
+}

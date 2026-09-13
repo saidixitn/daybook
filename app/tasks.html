@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tasks — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="loading">
+<div class="app" id="app">
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="skeleton"><div class="card" style="height:520px"><div class="sk line" style="width:30%;height:20px"></div><div class="sk line"></div><div class="sk line"></div><div class="sk line" style="width:70%"></div></div></div>
+
+    <div class="content">
+      <div class="tasks-layout">
+        <nav class="lists" id="lists" aria-label="Lists"></nav>
+        <section class="card">
+          <div class="tasks-tools">
+            <div class="input-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="input" id="q" placeholder="Search tasks" autocomplete="off"></div>
+            <div class="seg" id="scope">
+              <button aria-pressed="true" data-s="open">Open</button>
+              <button aria-pressed="false" data-s="all">All</button>
+              <button aria-pressed="false" data-s="done">Done</button>
+            </div>
+            <button class="icon-btn" id="clear-done" aria-label="Clear completed" title="Clear completed"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+          </div>
+          <div id="progress-wrap">
+            <div class="row small muted"><span id="progress-text"></span></div>
+            <div class="progress-ring"><i id="progress-bar"></i></div>
+          </div>
+          <div id="groups"></div>
+          <button class="add-row" id="add-inline"><svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a task</button>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/shell.js"></script>
+<script src="../assets/js/pages/tasks.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Settings — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="loading">
+<div class="app" id="app">
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+    <div class="skeleton"><div class="card" style="height:520px"><div class="sk line" style="width:30%;height:20px"></div><div class="sk line"></div><div class="sk line"></div></div></div>
+
+    <div class="content">
+      <div class="settings">
+        <nav class="settings-nav" aria-label="Settings sections">
+          <a href="#profile">Profile</a>
+          <a href="#appearance">Appearance</a>
+          <a href="#day">Your day</a>
+          <a href="#notifications">Notifications</a>
+          <a href="#data">Data</a>
+          <a href="#account">Account</a>
+        </nav>
+        <div class="settings-body">
+          <section class="card" id="profile">
+            <div class="card-head"><div><h2>Profile</h2><div class="sub">How Daybook greets you</div></div></div>
+            <div class="srow"><div class="sl"><b>First name</b><span>Shows in your morning greeting</span></div><input class="input" id="s-name"></div>
+            <div class="srow"><div class="sl"><b>Email</b><span>Used to sign in</span></div><input class="input" id="s-email" type="email"></div>
+            <div class="srow" style="border-top:0;padding-bottom:0"><span class="spacer"></span><button class="btn primary sm" id="save-profile">Save changes</button></div>
+          </section>
+
+          <section class="card" id="appearance">
+            <div class="card-head"><div><h2>Appearance</h2><div class="sub">Follows your device by default</div></div></div>
+            <div class="srow"><div class="sl"><b>Theme</b><span>Light, dark, or match the system</span></div>
+              <div class="seg" id="s-theme"><button data-t="system">System</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div>
+            </div>
+          </section>
+
+          <section class="card" id="day">
+            <div class="card-head"><div><h2>Your day</h2><div class="sub">Shapes the ribbon and the schedule view</div></div></div>
+            <div class="srow"><div class="sl"><b>Day starts</b><span>Earliest hour on your ribbon</span></div><select class="select" id="s-start"></select></div>
+            <div class="srow"><div class="sl"><b>Day ends</b><span>Latest hour on your ribbon</span></div><select class="select" id="s-end"></select></div>
+            <div class="srow" style="align-items:flex-start"><div class="sl"><b>Check-ins</b><span>What shows on Today</span></div>
+              <div class="chips" id="s-interests" style="max-width:420px">
+                <button class="chip" data-k="focus"><i></i>Focus time</button>
+                <button class="chip" data-k="sleep"><i></i>Sleep</button>
+                <button class="chip" data-k="movement"><i></i>Movement</button>
+                <button class="chip" data-k="reading"><i></i>Reading</button>
+                <button class="chip" data-k="water"><i></i>Water</button>
+                <button class="chip" data-k="meetings"><i></i>Meetings</button>
+                <button class="chip" data-k="mood"><i></i>Mood</button>
+                <button class="chip" data-k="money"><i></i>Spending</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" id="notifications">
+            <div class="card-head"><div><h2>Notifications</h2><div class="sub">Quiet by default</div></div></div>
+            <div class="srow"><div class="sl"><b>Morning brief</b><span>One message with your day, when it starts</span></div><button class="switch" role="switch" data-p="notifyMorning" aria-checked="false"></button></div>
+            <div class="srow"><div class="sl"><b>Gentle nudges</b><span>A reminder five minutes before each event</span></div><button class="switch" role="switch" data-p="notifyNudges" aria-checked="false"></button></div>
+            <div class="srow"><div class="sl"><b>Weekly recap</b><span>Your insights, every Sunday evening</span></div><button class="switch" role="switch" data-p="notifyWeekly" aria-checked="false"></button></div>
+          </section>
+
+          <section class="card" id="data">
+            <div class="card-head"><div><h2>Data</h2><div class="sub">Everything lives on this device</div></div></div>
+            <div class="srow"><div class="sl"><b>Export</b><span>Download your tasks, events and check-ins as JSON</span></div><button class="btn secondary sm" id="export">Export JSON</button></div>
+            <div class="srow"><div class="sl"><b>Reset</b><span>Restore the sample data. This can’t be undone.</span></div><button class="btn danger sm" id="reset">Reset data</button></div>
+          </section>
+
+          <section class="card" id="account">
+            <div class="card-head"><div><h2>Account</h2></div></div>
+            <div class="srow"><div class="sl"><b>Plan</b><span>Free — everything you need for one calm day at a time</span></div><a class="btn secondary sm" href="../index.html#pricing">See plans</a></div>
+            <div class="srow"><div class="sl"><b>Sign out</b><span>Your data stays on this device</span></div><button class="btn ghost sm" id="signout">Sign out</button></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/shell.js"></script>
+<script src="../assets/js/pages/settings.js"></script>
+</body>
+</html>

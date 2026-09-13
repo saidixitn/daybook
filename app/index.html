@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Today — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body class="loading">
+<div class="app" id="app">
+  <main class="main">
+    <header class="topbar" id="topbar"></header>
+
+    <div class="skeleton">
+      <div class="card" style="margin-bottom:20px;height:210px"><div class="sk line" style="width:30%"></div><div class="sk line" style="width:55%;height:30px"></div><div class="sk line" style="width:40%"></div></div>
+      <div class="grid2"><div class="card" style="height:340px"><div class="sk line" style="width:40%;height:20px"></div><div class="sk line"></div><div class="sk line"></div></div><div class="card" style="height:340px"><div class="sk line" style="width:40%;height:20px"></div><div class="sk line"></div><div class="sk line"></div></div></div>
+    </div>
+
+    <div class="content">
+      <section class="card hero" aria-label="Right now">
+        <div class="now" id="now">
+          <div class="label"><span class="dot"></span><span>Happening now</span></div>
+          <div class="title">—</div>
+          <div class="meta">—</div>
+          <div class="spacer"></div>
+          <div class="bar"><i></i></div>
+          <div class="foot"><span>—</span><span>—</span></div>
+        </div>
+        <div class="ribbon">
+          <div class="rhead">
+            <span id="ribbon-span">Today</span>
+            <span class="spacer"></span>
+            <div class="ribbon-legend">
+              <span><i style="background:var(--accent-soft)"></i>Plans</span>
+              <span><i style="background:var(--ink)"></i>Focus</span>
+              <span><i style="background:var(--warn-soft)"></i>Body</span>
+              <span><i style="background:var(--good-soft)"></i>Done</span>
+            </div>
+          </div>
+          <div class="ribbon-track" id="ribbon"></div>
+          <div class="ribbon-foot"></div>
+        </div>
+      </section>
+
+      <div class="grid2">
+        <section class="card" aria-labelledby="sched-h">
+          <div class="card-head">
+            <div><h2 id="sched-h">Schedule</h2><div class="sub" id="sched-sub"></div></div>
+            <span class="spacer"></span>
+            <a class="btn ghost sm" href="schedule.html">Full week</a>
+          </div>
+          <ul class="timeline" id="timeline"></ul>
+        </section>
+
+        <section class="card" aria-labelledby="tasks-h">
+          <div class="card-head">
+            <div><h2 id="tasks-h">Today’s tasks</h2><div class="sub" id="tasks-sub"></div></div>
+            <span class="spacer"></span>
+            <a class="btn ghost sm" href="tasks.html">All tasks</a>
+          </div>
+          <div class="seg" id="chips" style="margin-bottom:14px">
+            <button aria-pressed="true" data-f="open">Open<span class="n"></span></button>
+            <button aria-pressed="false" data-f="doing">In progress<span class="n"></span></button>
+            <button aria-pressed="false" data-f="done">Done<span class="n"></span></button>
+          </div>
+          <ul class="tasks" id="tasks"></ul>
+          <button class="add-row" id="add-inline"><svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a task</button>
+        </section>
+      </div>
+
+      <div class="grid2">
+        <section class="card" aria-labelledby="focus-h" id="focus-card">
+          <div class="card-head"><div><h2 id="focus-h">Focus this week</h2><div class="sub">Hours in deep-work blocks</div></div><span class="spacer"></span><a class="btn ghost sm" href="insights.html">Insights</a></div>
+          <div class="stat"><b id="focus-total">0</b><span>h so far</span></div>
+          <div class="delta" id="focus-delta"></div>
+          <svg class="chart" id="chart" viewBox="0 0 400 150" preserveAspectRatio="none" aria-label="Focus hours by day"></svg>
+        </section>
+
+        <section class="card" aria-labelledby="checkin-h" id="checkin-card">
+          <div class="card-head"><div><h2 id="checkin-h">Check-ins</h2><div class="sub" id="checkin-sub">One tap each. Takes ten seconds.</div></div></div>
+          <div id="sleep-block">
+            <div class="dials" id="dials">
+              <button class="dial" aria-pressed="false" data-v="Rough" aria-label="Rough"><svg viewBox="0 0 24 24"><path d="M4 15c3-6 13-6 16 0"/></svg></button>
+              <button class="dial" aria-pressed="false" data-v="Okay" aria-label="Okay"><svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg></button>
+              <button class="dial" aria-pressed="false" data-v="Good" aria-label="Good"><svg viewBox="0 0 24 24"><path d="M4 9c3 6 13 6 16 0"/></svg></button>
+              <button class="dial" aria-pressed="false" data-v="Great" aria-label="Great"><svg viewBox="0 0 24 24"><path d="M4 8c3 8 13 8 16 0"/></svg></button>
+            </div>
+            <div class="dial-labels"><span>Rough</span><span>Okay</span><span>Good</span><span>Great</span></div>
+            <div class="streak"><span id="streak-text"></span><div class="days" id="streak-days"></div></div>
+          </div>
+          <div class="quick" id="quick" style="margin-top:16px"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/shell.js"></script>
+<script src="../assets/js/pages/today.js"></script>
+</body>
+</html>

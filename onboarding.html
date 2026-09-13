@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Set up — Daybook</title>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+</head>
+<body>
+<main class="ob">
+  <div class="ob-card">
+    <div class="ob-progress" id="progress"><i class="on"></i><i></i><i></i></div>
+
+    <section class="ob-step active" data-step="0">
+      <h2>First, your name.</h2>
+      <p>It shows up in your greeting each morning. Nothing else.</p>
+      <div class="field">
+        <label for="ob-name">First name</label>
+        <input class="input" id="ob-name" placeholder="e.g. Sam" autocomplete="given-name" />
+      </div>
+    </section>
+
+    <section class="ob-step" data-step="1">
+      <h2>What do you want to keep an eye on?</h2>
+      <p>Pick a few. Only these show up on your Today screen.</p>
+      <div class="chips" id="interests">
+        <button class="chip" aria-pressed="true" data-k="focus"><i></i>Focus time</button>
+        <button class="chip" aria-pressed="true" data-k="sleep"><i></i>Sleep</button>
+        <button class="chip" aria-pressed="false" data-k="movement"><i></i>Movement</button>
+        <button class="chip" aria-pressed="false" data-k="reading"><i></i>Reading</button>
+        <button class="chip" aria-pressed="false" data-k="water"><i></i>Water</button>
+        <button class="chip" aria-pressed="false" data-k="meetings"><i></i>Meetings</button>
+        <button class="chip" aria-pressed="false" data-k="mood"><i></i>Mood</button>
+        <button class="chip" aria-pressed="false" data-k="money"><i></i>Spending</button>
+      </div>
+    </section>
+
+    <section class="ob-step" data-step="2">
+      <h2>When does your day happen?</h2>
+      <p>Your day view spans these hours. Change it any time in Settings.</p>
+      <div class="hours">
+        <div class="hour-pick">
+          <label>Day starts</label>
+          <div class="val" id="start-val">6:00 AM</div>
+          <div class="ctl"><button data-adj="start" data-d="-1" aria-label="Earlier"></button><button data-adj="start" data-d="1" aria-label="Later"></button></div>
+        </div>
+        <div class="hour-pick">
+          <label>Day ends</label>
+          <div class="val" id="end-val">11:00 PM</div>
+          <div class="ctl"><button data-adj="end" data-d="-1" aria-label="Earlier"></button><button data-adj="end" data-d="1" aria-label="Later"></button></div>
+        </div>
+      </div>
+      <div class="ob-preview"><div class="ribbon-track" id="ob-ribbon"></div><div class="ribbon-foot"></div></div>
+    </section>
+
+    <div class="ob-foot">
+      <button class="btn ghost" id="back" style="display:none">Back</button>
+      <button class="btn primary" id="next">Continue</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+</main>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/onboarding.js"></script>
+</body>
+</html>
