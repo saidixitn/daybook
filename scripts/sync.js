@@ -1,5 +1,5 @@
-// Sync script: copies web source files into www/ (for Capacitor) and public/ (for Vercel),
-// and creates directory index fallbacks for universal clean URL support.
+// Sync script: copies web source files into www/ (Capacitor) and public/ (Vercel),
+// creating app.html and directory backups for universal clean URL support.
 const fs = require('fs');
 const path = require('path');
 
@@ -18,16 +18,6 @@ const itemsToCopy = [
   'sw.js',
   'app',
   'assets'
-];
-
-const cleanRoutes = [
-  { src: 'login.html', outDir: 'login' },
-  { src: 'signup.html', outDir: 'signup' },
-  { src: 'onboarding.html', outDir: 'onboarding' },
-  { src: path.join('app', 'schedule.html'), outDir: path.join('app', 'schedule') },
-  { src: path.join('app', 'tasks.html'), outDir: path.join('app', 'tasks') },
-  { src: path.join('app', 'insights.html'), outDir: path.join('app', 'insights') },
-  { src: path.join('app', 'settings.html'), outDir: path.join('app', 'settings') },
 ];
 
 function copyRecursive(src, dst) {
@@ -51,15 +41,12 @@ for (const dest of targets) {
     copyRecursive(path.join(root, item), path.join(dest, item));
   }
 
-  // Generate directory index fallbacks for clean URLs
-  for (const route of cleanRoutes) {
-    const srcFile = path.join(root, route.src);
-    const targetDir = path.join(dest, route.outDir);
-    const targetIndex = path.join(targetDir, 'index.html');
-    if (fs.existsSync(srcFile)) {
-      if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
-      fs.copyFileSync(srcFile, targetIndex);
-    }
+  // Create root app.html (mirrors app/index.html) so /app matches app.html directly on Vercel
+  const appIndex = path.join(root, 'app', 'index.html');
+  const appRootHtml = path.join(dest, 'app.html');
+  if (fs.existsSync(appIndex)) {
+    fs.copyFileSync(appIndex, appRootHtml);
   }
-  console.log(`✓ Successfully synced to ${name}/ (with clean URL routes)`);
+
+  console.log(`✓ Successfully synced to ${name}/ with clean URL app.html`);
 }
