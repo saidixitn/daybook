@@ -269,6 +269,14 @@ ul { list-style: none; margin: 0; padding: 0; }
 @keyframes shimmer { to { transform: translateX(100%); } }
 .sk.line { height: 14px; margin: 8px 0; }
 
+/* ---------- Animations ---------- */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.shake { animation: shake .35s var(--ease); }
+
 /* ---------- Motion prefs ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

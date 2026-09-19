@@ -35,6 +35,14 @@
   }
   $('#timeline').addEventListener('click', e => { const li = e.target.closest('.ev'); if (li) location.href = `schedule.html?event=${li.dataset.id}`; });
 
+  /* ---------- Focus button on Today card ---------- */
+  $('#today-start-focus')?.addEventListener('click', () => {
+    const ev = events();
+    const n = UI.nowMin();
+    const live = ev.find(e => n >= e.t && n < e.t + e.d);
+    Shell.openFocusMode(live ? live.title : 'Deep work', live ? Math.max(15, live.d) : 25);
+  });
+
   /* ---------- Tasks ---------- */
   let filter = 'open';
   function renderTasks() {
@@ -87,6 +95,7 @@
     const b = e.target.closest('.dial'); if (!b) return;
     S.sleep[today] = b.dataset.v; S.streak[today] = 1; Store.save(); renderStreak();
     UI.toast(`Sleep logged: ${b.dataset.v}`, 'moon');
+    UI.sound.playTick();
   });
 
   // Quick counters for the other interests (stored per day in prefs.quick)
@@ -114,11 +123,19 @@
   }
   $('#quick').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.mood) { Q.mood = b.dataset.mood; UI.toast(`Mood: ${Q.mood}`, 'sun'); }
-    else { const def = defs[b.dataset.k]; Q[b.dataset.k] = Math.max(0, Math.min(def.max || 9999, (Q[b.dataset.k] || 0) + +b.dataset.d)); }
+    if (b.dataset.mood) { Q.mood = b.dataset.mood; UI.toast(`Mood: ${Q.mood}`, 'sun'); UI.sound.playTick(); }
+    else { const def = defs[b.dataset.k]; Q[b.dataset.k] = Math.max(0, Math.min(def.max || 9999, (Q[b.dataset.k] || 0) + +b.dataset.d)); UI.sound.playTick(); }
     Store.save(); renderQuick();
   });
 
+  document.addEventListener('store:synced', () => {
+    renderSchedule();
+    renderTasks();
+    renderChart();
+    renderStreak();
+    renderQuick();
+  });
+
   renderSchedule(); renderTasks(); renderChart(); renderStreak(); renderQuick();
-  setInterval(tick, 15000);
+  setInterval(tick, 1000);
 })();

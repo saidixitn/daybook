@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Daybook — your whole day, one calm screen</title>
   <meta name="description" content="Daybook pulls your schedule, tasks and daily check-ins into a single view that always knows what's happening right now." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1A1A18" />
+  <meta property="og:title" content="Daybook — your whole day, one calm screen" />
+  <meta property="og:description" content="A daily planner that puts what's happening right now on top. Private, fast, offline-first." />
+  <meta property="og:type" content="website" />
   <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
@@ -15,7 +22,7 @@
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="logo" href="index.html" aria-label="Daybook home">
-      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5.5" fill="currentColor" fill-opacity="0.12"/><path d="M6 10h12M6 14h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14" r="2.2" fill="#F26B3A"/><circle cx="17.5" cy="7.5" r="1.5" fill="#1FA463"/></svg></span>
       Daybook
     </a>
     <nav class="nav-links" aria-label="Sections">
@@ -24,10 +31,10 @@
       <a href="#pricing">Pricing</a>
     </nav>
     <span class="spacer"></span>
-    <div class="nav-actions">
+    <div class="nav-actions" id="nav-actions">
       <button class="icon-btn plain" id="theme-toggle" aria-label="Toggle theme"></button>
-      <a class="btn ghost" href="login.html">Log in</a>
-      <a class="btn primary" href="signup.html">Get started</a>
+      <a class="btn ghost" id="nav-login" href="login.html">Log in</a>
+      <a class="btn primary" id="nav-signup" href="signup.html">Get started</a>
     </div>
   </div>
 </header>
@@ -38,7 +45,7 @@
     <h1>Your whole day, on one calm screen.</h1>
     <p>Daybook pulls your schedule, tasks and daily check-ins into a single view that always knows what’s happening right now — and what comes next.</p>
     <div class="hero-actions">
-      <a class="btn primary lg" href="signup.html">Start for free</a>
+      <a class="btn primary lg" id="hero-start" href="signup.html">Start for free</a>
       <a class="btn secondary lg" href="#how">See how it works</a>
     </div>
     <div class="note">Free plan. No card needed. Works on web and phone.</div>
@@ -244,13 +251,16 @@
 <footer class="footer wrap">
   <div class="top">
     <div>
-      <a class="logo" href="index.html"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h9M5 7h14M5 17h5"/></svg></span>Daybook</a>
+      <a class="logo" href="index.html">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5.5" fill="currentColor" fill-opacity="0.12"/><path d="M6 10h12M6 14h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14" r="2.2" fill="#F26B3A"/><circle cx="17.5" cy="7.5" r="1.5" fill="#1FA463"/></svg></span>
+        Daybook
+      </a>
       <p class="muted small" style="margin-top:12px;max-width:30ch">Your whole day, on one calm screen.</p>
     </div>
     <div class="cols">
       <div class="col"><b>Product</b><a href="#product">Overview</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="app/index.html?demo=1">Demo</a></div>
       <div class="col"><b>Account</b><a href="login.html">Log in</a><a href="signup.html">Sign up</a><a href="app/settings.html">Settings</a></div>
-      <div class="col"><b>Company</b><a href="#">About</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+      <div class="col"><b>Company</b><a href="#about" id="footer-about">About</a><a href="#privacy" id="footer-privacy">Privacy</a><a href="#terms" id="footer-terms">Terms</a></div>
     </div>
   </div>
   <div class="bottom"><span>© 2026 Daybook</span><span>Made with care for people who like quiet screens.</span></div>

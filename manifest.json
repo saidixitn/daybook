@@ -1,0 +1,17 @@
+{
+  "name": "Daybook",
+  "short_name": "Daybook",
+  "description": "Your whole day, on one calm screen. A daily planner that puts what's happening right now on top.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F6F6F3",
+  "theme_color": "#1A1A18",
+  "icons": [
+    {
+      "src": "./assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

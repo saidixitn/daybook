@@ -1,0 +1,30 @@
+{
+  "name": "daybook",
+  "version": "1.0.0",
+  "description": "Your whole day, on one calm screen. A daily planner that puts *what's happening right now* on top, keeps tasks and check-ins one glance away, and works the same on desktop and phone.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "python3 -m http.server 8080",
+    "build": "node scripts/sync.js",
+    "sync": "node scripts/sync.js && npx cap copy",
+    "test": "node -c assets/js/*.js assets/js/pages/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saidixitn/daybook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/saidixitn/daybook/issues"
+  },
+  "homepage": "https://github.com/saidixitn/daybook#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}

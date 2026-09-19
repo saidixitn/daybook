@@ -269,3 +269,55 @@ body.loading .skeleton { display: block; }
   .srow { flex-wrap: wrap; }
   .srow .input, .srow .select { width: 100%; }
 }
+
+/* ---------- Live Header Status ---------- */
+.live-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: var(--fs-xs); font-weight: 500; color: var(--ink-2);
+  cursor: pointer; transition: border-color var(--t-base), transform var(--t-fast) var(--ease);
+}
+.live-status:hover { border-color: var(--line-strong); transform: translateY(-1px); color: var(--ink); }
+.live-status .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 0 rgba(242,107,58,.4); animation: pulse-coral 2s infinite; }
+@keyframes pulse-coral {
+  0% { box-shadow: 0 0 0 0 rgba(242,107,58,.45); }
+  70% { box-shadow: 0 0 0 8px rgba(242,107,58,0); }
+  100% { box-shadow: 0 0 0 0 rgba(242,107,58,0); }
+}
+
+/* ---------- Focus Mode Overlay ---------- */
+.focus-overlay {
+  position: fixed; inset: 0; background: color-mix(in srgb, var(--bg) 96%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 80;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity var(--t-slow) var(--ease); padding: 24px;
+}
+.focus-overlay.open { opacity: 1; pointer-events: auto; }
+.focus-box { max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; background: var(--surface); padding: 40px 32px 32px; border-radius: var(--r-xl); box-shadow: var(--shadow-3); border: 1px solid var(--line); position: relative; }
+.focus-close { position: absolute; top: 16px; right: 16px; }
+.focus-task-title { font-size: var(--fs-lg); font-weight: 600; margin-bottom: 24px; color: var(--ink); max-width: 32ch; }
+.focus-ring-wrap { width: 200px; height: 200px; position: relative; margin: 0 auto 24px; }
+.focus-ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.focus-ring-svg circle.bg { fill: none; stroke: var(--surface-2); stroke-width: 8; }
+.focus-ring-svg circle.fg { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray .5s var(--ease); }
+.focus-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.focus-digits { font-size: 42px; font-weight: 600; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.focus-sublabel { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+.focus-ctrls { display: flex; align-items: center; gap: 12px; }
+.focus-ambient { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+
+/* ---------- Provider Badges ---------- */
+.provider-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+  border-radius: var(--r-pill); font-size: 13px; font-weight: 500; background: var(--surface-2); border: 1px solid var(--line);
+}
+.provider-badge svg { width: 16px; height: 16px; flex: none; }
+
+/* ---------- Import Area ---------- */
+.import-zone {
+  border: 1.5px dashed var(--line-strong); border-radius: var(--r-md); padding: 18px;
+  text-align: center; cursor: pointer; transition: border-color var(--t-base), background var(--t-base);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: var(--fs-sm);
+}
+.import-zone:hover { border-color: var(--accent); background: var(--surface-2); }
+

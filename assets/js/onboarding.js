@@ -47,7 +47,13 @@
   next.addEventListener('click', () => {
     if (step === 0) {
       const n = nameIn.value.trim();
-      if (!n) { nameIn.focus(); nameIn.classList.add('shake'); return; }
+      if (!n) {
+        nameIn.focus();
+        nameIn.classList.remove('shake');
+        void nameIn.offsetWidth;
+        nameIn.classList.add('shake');
+        return;
+      }
       Store.signIn(n, S.user?.email || '');
     }
     if (step === 1) { S.prefs.interests = selected(); Store.save(); }

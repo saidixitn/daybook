@@ -20,6 +20,105 @@ window.UI = (() => {
   };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+  /* ---------- Sound synthesizer (Web Audio API) ---------- */
+  let audioCtx = null;
+  let rainSource = null;
+  let rainGain = null;
+
+  function getAudioContext() {
+    if (!audioCtx && typeof window.AudioContext !== 'undefined') {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  const sound = {
+    playTick() {
+      if (!Store.state.prefs.sound) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch (e) { /* ignore */ }
+    },
+    playChime() {
+      if (!Store.state.prefs.sound) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        [523.25, 659.25, 783.99].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.001, ctx.currentTime + idx * 0.08);
+          gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + idx * 0.08 + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.6);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.08);
+          osc.stop(ctx.currentTime + idx * 0.08 + 0.65);
+        });
+      } catch (e) { /* ignore */ }
+    },
+    startRain() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx || rainSource) return;
+        const bufferSize = ctx.sampleRate * 2;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          data[i] = (lastOut + (0.02 * white)) / 1.02; // pinkish filter
+          lastOut = data[i];
+          data[i] *= 0.7;
+        }
+        rainSource = ctx.createBufferSource();
+        rainSource.buffer = buffer;
+        rainSource.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(850, ctx.currentTime);
+
+        rainGain = ctx.createGain();
+        rainGain.gain.setValueAtTime(0.001, ctx.currentTime);
+        rainGain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 1.2);
+
+        rainSource.connect(filter);
+        filter.connect(rainGain);
+        rainGain.connect(ctx.destination);
+        rainSource.start();
+      } catch (e) { /* ignore */ }
+    },
+    stopRain() {
+      try {
+        if (rainGain && audioCtx) {
+          rainGain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+          setTimeout(() => {
+            if (rainSource) { rainSource.stop(); rainSource.disconnect(); rainSource = null; }
+            rainGain = null;
+          }, 650);
+        }
+      } catch (e) { /* ignore */ }
+    }
+  };
+
   /* ---------- Day ribbon ---------- */
   function renderRibbon(track, events, now, opts = {}) {
     const start = (opts.start ?? 6) * 60, end = (opts.end ?? 23) * 60, span = end - start;
@@ -52,13 +151,14 @@ window.UI = (() => {
     return { state: 'done', label: 'Day complete', title: 'That\u2019s a wrap', meta: `${events.length} events, all behind you`, pct: 100, left: 'Rest up', next: 'Nothing left today' };
   }
   function paintNow(root, s) {
-    $('.label span:last-child', root).textContent = s.label;
-    $('.dot', root).style.display = s.state === 'live' ? '' : 'none';
-    $('.title', root).textContent = s.title;
-    $('.meta', root).textContent = s.meta;
-    $('.bar i', root).style.width = s.pct + '%';
-    $('.foot span:first-child', root).textContent = s.left;
-    $('.foot span:last-child', root).textContent = s.next;
+    if (!root) return;
+    const l = $('.label span:last-child', root); if (l) l.textContent = s.label;
+    const dot = $('.dot', root); if (dot) dot.style.display = s.state === 'live' ? '' : 'none';
+    const t = $('.title', root); if (t) t.textContent = s.title;
+    const m = $('.meta', root); if (m) m.textContent = s.meta;
+    const bar = $('.bar i', root); if (bar) bar.style.width = s.pct + '%';
+    const fl = $('.foot span:first-child', root); if (fl) fl.textContent = s.left;
+    const fr = $('.foot span:last-child', root); if (fr) fr.textContent = s.next;
   }
 
   /* ---------- Toast ---------- */
@@ -80,9 +180,11 @@ window.UI = (() => {
   const openStack = new Set();
   function openLayer(el) { getScrim().classList.add('open'); el.classList.add('open'); openStack.add(el); }
   function closeLayer(el) { el.classList.remove('open'); openStack.delete(el); if (!openStack.size) getScrim().classList.remove('open'); }
-  function closeAll() { [...openStack].forEach(closeLayer); }
+  function closeAll() {
+    [...openStack].forEach(closeLayer);
+    sound.stopRain();
+  }
 
-  // Generic sheet: openSheet({ title, body(html), onOpen(el), primary:{label, onClick}, secondary:{label,onClick} })
   let sheetEl;
   function openSheet(cfg) {
     if (!sheetEl) { sheetEl = document.createElement('div'); sheetEl.className = 'sheet'; sheetEl.setAttribute('role', 'dialog'); document.body.appendChild(sheetEl); }
@@ -96,6 +198,66 @@ window.UI = (() => {
     setTimeout(() => { const f = sheetEl.querySelector('input,textarea,select'); f && f.focus(); }, 180);
   }
   function closeSheet() { sheetEl && closeLayer(sheetEl); }
+
+  /* ---------- Info Sheets ---------- */
+  function showPrivacy() {
+    openSheet({
+      title: 'Privacy by Design',
+      body: `
+        <div style="font-size:14px;line-height:1.6;color:var(--ink-2);display:flex;flex-direction:column;gap:12px">
+          <p><b style="color:var(--ink)">Zero tracking. Zero remote database.</b> Daybook operates 100% on your device using browser local storage.</p>
+          <p>Your tasks, focus history, check-in journals, and schedule never touch external servers or advertising trackers. You own your data completely.</p>
+          <p>You can export or purge your data at any time from <b>Settings &gt; Data</b>.</p>
+        </div>`,
+      primary: { label: 'Understood', onClick: closeSheet }
+    });
+  }
+
+  function showTerms() {
+    openSheet({
+      title: 'Terms of Quiet Software',
+      body: `
+        <div style="font-size:14px;line-height:1.6;color:var(--ink-2);display:flex;flex-direction:column;gap:12px">
+          <p><b style="color:var(--ink)">A calm tool that respects your attention.</b> Daybook is built to answer "what now?" and get out of the way.</p>
+          <p>We do not sell attention, send dark-pattern spam, or push unsolicited notifications. By using Daybook, you agree to treat your own time with care.</p>
+        </div>`,
+      primary: { label: 'Got it', onClick: closeSheet }
+    });
+  }
+
+  function showAbout() {
+    openSheet({
+      title: 'About Daybook',
+      body: `
+        <div style="font-size:14px;line-height:1.6;color:var(--ink-2);display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+            <span class="logo-mark" style="width:36px;height:36px">${icon('logo')}</span>
+            <div><b style="color:var(--ink);font-size:16px">Daybook v1.2</b><div class="small muted">Your whole day, on one calm screen.</div></div>
+          </div>
+          <p>Designed for people who want quiet tools. Works seamlessly on desktop, iPad, and phone, offline or online.</p>
+          <div style="background:var(--surface-2);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+            <div><span class="kbd">⌘K</span> Command palette</div>
+            <div><span class="kbd">N</span> Quick task</div>
+            <div><span class="kbd">T</span> Toggle theme</div>
+            <div><span class="kbd">1–5</span> Switch views</div>
+          </div>
+        </div>`,
+      primary: { label: 'Close', onClick: closeSheet }
+    });
+  }
+
+  function showForgotPassword() {
+    openSheet({
+      title: 'Account Recovery',
+      body: `
+        <div style="font-size:14px;line-height:1.6;color:var(--ink-2);display:flex;flex-direction:column;gap:12px">
+          <p><b style="color:var(--ink)">Daybook is private to your device.</b> We don't store passwords on remote databases.</p>
+          <p>You can sign in directly using any email address or via Google / Apple to continue your calm day.</p>
+        </div>`,
+      primary: { label: 'Continue as Guest', onClick: () => { Store.signIn('Guest', 'guest@daybook.so'); closeSheet(); location.href = 'app/index.html'; } },
+      secondary: { label: 'Close', onClick: closeSheet }
+    });
+  }
 
   /* ---------- Command palette ---------- */
   let pal, palItems = [], palIdx = 0, palCommands = [], palSearch = null;
@@ -140,5 +302,10 @@ window.UI = (() => {
     if (e.key === 'Escape') closeAll();
   });
 
-  return { fmt, fmtShort, nowMin, DAYS, DAYS_LONG, greeting, esc, renderRibbon, nowSummary, paintNow, toast, openSheet, closeSheet, initPalette, openPalette, closePalette, closeAll };
+  return {
+    fmt, fmtShort, nowMin, DAYS, DAYS_LONG, greeting, esc,
+    renderRibbon, nowSummary, paintNow, toast, sound,
+    openSheet, closeSheet, showPrivacy, showTerms, showAbout, showForgotPassword,
+    initPalette, openPalette, closePalette, closeAll
+  };
 })();

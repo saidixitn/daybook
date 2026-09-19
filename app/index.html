@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Today — Daybook</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="../assets/favicon.svg" />
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1A1A18" />
   <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/base.css" />
@@ -22,7 +26,13 @@
     <div class="content">
       <section class="card hero" aria-label="Right now">
         <div class="now" id="now">
-          <div class="label"><span class="dot"></span><span>Happening now</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+            <div class="label"><span class="dot"></span><span>Happening now</span></div>
+            <button class="btn secondary sm" id="today-start-focus" style="height:30px;padding:0 10px;font-size:12px;gap:6px">
+              <svg class="icon xs" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+              Focus mode
+            </button>
+          </div>
           <div class="title">—</div>
           <div class="meta">—</div>
           <div class="spacer"></div>

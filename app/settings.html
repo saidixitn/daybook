@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Settings — Daybook</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="../assets/favicon.svg" />
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1A1A18" />
   <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/base.css" />
@@ -34,9 +38,14 @@
           </section>
 
           <section class="card" id="appearance">
-            <div class="card-head"><div><h2>Appearance</h2><div class="sub">Follows your device by default</div></div></div>
-            <div class="srow"><div class="sl"><b>Theme</b><span>Light, dark, or match the system</span></div>
+            <div class="card-head"><div><h2>Appearance &amp; Sound</h2><div class="sub">Personalize your quiet workspace</div></div></div>
+            <div class="srow">
+              <div class="sl"><b>Theme</b><span>Light, dark, or match the system</span></div>
               <div class="seg" id="s-theme"><button data-t="system">System</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div>
+            </div>
+            <div class="srow">
+              <div class="sl"><b>Sound effects</b><span>Subtle tactile ticks and gentle completion chimes</span></div>
+              <button class="switch" role="switch" data-p="sound" aria-checked="true"></button>
             </div>
           </section>
 
@@ -59,20 +68,36 @@
           </section>
 
           <section class="card" id="notifications">
-            <div class="card-head"><div><h2>Notifications</h2><div class="sub">Quiet by default</div></div></div>
+            <div class="card-head"><div><h2>Notifications</h2><div class="sub">Quiet by default. Requests browser permission when turned on.</div></div></div>
             <div class="srow"><div class="sl"><b>Morning brief</b><span>One message with your day, when it starts</span></div><button class="switch" role="switch" data-p="notifyMorning" aria-checked="false"></button></div>
             <div class="srow"><div class="sl"><b>Gentle nudges</b><span>A reminder five minutes before each event</span></div><button class="switch" role="switch" data-p="notifyNudges" aria-checked="false"></button></div>
             <div class="srow"><div class="sl"><b>Weekly recap</b><span>Your insights, every Sunday evening</span></div><button class="switch" role="switch" data-p="notifyWeekly" aria-checked="false"></button></div>
+            <div class="srow"><div class="sl"><b>Test alert</b><span>Verify that browser notifications work</span></div><button class="btn secondary sm" id="test-notify">Send test nudge</button></div>
           </section>
 
           <section class="card" id="data">
-            <div class="card-head"><div><h2>Data</h2><div class="sub">Everything lives on this device</div></div></div>
-            <div class="srow"><div class="sl"><b>Export</b><span>Download your tasks, events and check-ins as JSON</span></div><button class="btn secondary sm" id="export">Export JSON</button></div>
-            <div class="srow"><div class="sl"><b>Reset</b><span>Restore the sample data. This can’t be undone.</span></div><button class="btn danger sm" id="reset">Reset data</button></div>
+            <div class="card-head"><div><h2>Data &amp; Backup</h2><div class="sub">Everything lives securely on this device</div></div></div>
+            <div class="srow">
+              <div class="sl"><b>Export JSON</b><span>Download all tasks, events and history</span></div>
+              <button class="btn secondary sm" id="export">Export JSON</button>
+            </div>
+            <div class="srow">
+              <div class="sl"><b>Import JSON</b><span>Restore Daybook data from a previously exported file</span></div>
+              <input type="file" id="import-file" accept=".json" style="display:none">
+              <button class="btn secondary sm" id="import-btn">Import JSON</button>
+            </div>
+            <div class="srow">
+              <div class="sl"><b>Reset sample data</b><span>Restore original sample tasks and events</span></div>
+              <button class="btn danger sm" id="reset">Reset data</button>
+            </div>
           </section>
 
           <section class="card" id="account">
-            <div class="card-head"><div><h2>Account</h2></div></div>
+            <div class="card-head"><div><h2>Account</h2><div class="sub">Authentication and plan</div></div></div>
+            <div class="srow">
+              <div class="sl"><b>Sign-in method</b><span>Connected authentication provider</span></div>
+              <div id="auth-provider-badge"></div>
+            </div>
             <div class="srow"><div class="sl"><b>Plan</b><span>Free — everything you need for one calm day at a time</span></div><a class="btn secondary sm" href="../index.html#pricing">See plans</a></div>
             <div class="srow"><div class="sl"><b>Sign out</b><span>Your data stays on this device</span></div><button class="btn ghost sm" id="signout">Sign out</button></div>
           </section>

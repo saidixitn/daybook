@@ -1,4 +1,4 @@
-// Daybook store — one JSON blob in localStorage, seeded on first run.
+// Daybook store — one JSON blob in localStorage, seeded on first run, with cross-tab sync.
 (() => {
   const KEY = 'daybook:v1';
   const h = (hh, mm = 0) => hh * 60 + mm;
@@ -39,11 +39,20 @@
   }
 
   const defaults = () => ({
-    user: null,                       // { name, email }
-    prefs: { theme: 'system', dayStart: 6, dayEnd: 23, notifyMorning: true, notifyNudges: true, notifyWeekly: false, interests: ['focus', 'sleep'] },
+    user: null, // { name, email, provider: 'email'|'google'|'apple', avatar }
+    prefs: {
+      theme: 'system',
+      dayStart: 6,
+      dayEnd: 23,
+      sound: true,
+      notifyMorning: true,
+      notifyNudges: true,
+      notifyWeekly: false,
+      interests: ['focus', 'sleep']
+    },
     events: seedEvents(),
     tasks: seedTasks(),
-    focus: [3.5, 4.2, 2.8, 5.1, 3.9, 1.5, 0],   // hours Mon..Sun
+    focus: [3.5, 4.2, 2.8, 5.1, 3.9, 1.5, 0], // hours Mon..Sun
     sleep: ['Good', 'Okay', 'Great', 'Good', 'Rough', 'Good', null], // Mon..Sun
     streak: [1, 1, 1, 1, 1, 1, 0],
     nextId: 100,
@@ -53,28 +62,98 @@
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) return Object.assign(defaults(), JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const def = defaults();
+        parsed.prefs = Object.assign(def.prefs, parsed.prefs || {});
+        return Object.assign(def, parsed);
+      }
     } catch (e) { /* ignore */ }
     return defaults();
   }
 
+  let broadcast;
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      broadcast = new BroadcastChannel('daybook_sync');
+      broadcast.onmessage = () => {
+        Store.state = load();
+        Store.applyTheme();
+        document.dispatchEvent(new CustomEvent('store:synced'));
+        document.dispatchEvent(new CustomEvent('tasks:changed'));
+      };
+    }
+  } catch (e) { /* ignore */ }
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === KEY) {
+      Store.state = load();
+      Store.applyTheme();
+      document.dispatchEvent(new CustomEvent('store:synced'));
+      document.dispatchEvent(new CustomEvent('tasks:changed'));
+    }
+  });
+
   const Store = {
     state: load(),
-    save() { try { localStorage.setItem(KEY, JSON.stringify(Store.state)); } catch (e) { /* ignore */ } },
-    reset() { Store.state = defaults(); Store.save(); },
-    nextId() { const id = Store.state.nextId++; Store.save(); return id; },
-    today() { return (new Date().getDay() + 6) % 7; },
-    // theme helpers
-    setTheme(t) { Store.state.prefs.theme = t; Store.save(); Store.applyTheme(); },
+    save() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(Store.state));
+        if (broadcast) broadcast.postMessage({ type: 'sync', time: Date.now() });
+      } catch (e) { /* ignore */ }
+    },
+    reset() {
+      Store.state = defaults();
+      Store.save();
+      document.dispatchEvent(new CustomEvent('store:synced'));
+    },
+    nextId() {
+      const id = Store.state.nextId++;
+      Store.save();
+      return id;
+    },
+    today() {
+      return (new Date().getDay() + 6) % 7;
+    },
+    setTheme(t) {
+      Store.state.prefs.theme = t;
+      Store.save();
+      Store.applyTheme();
+      document.dispatchEvent(new CustomEvent('theme:changed', { detail: t }));
+    },
     applyTheme() {
-      const t = Store.state.prefs.theme;
+      const t = Store.state.prefs.theme || 'system';
       const dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
       try { localStorage.setItem('daybook:theme', dark ? 'dark' : 'light'); } catch (e) { /* ignore */ }
     },
-    signIn(name, email) { Store.state.user = { name, email }; Store.save(); },
-    signOut() { Store.state.user = null; Store.save(); },
+    signIn(name, email, provider = 'email', avatar = null) {
+      Store.state.user = { name, email, provider, avatar };
+      Store.save();
+    },
+    signOut() {
+      Store.state.user = null;
+      Store.save();
+    },
+    importData(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        if (!data || typeof data !== 'object') throw new Error('Invalid JSON format');
+        if (!Array.isArray(data.tasks) || !Array.isArray(data.events)) {
+          throw new Error('Missing tasks or events in backup file');
+        }
+        Store.state = Object.assign(defaults(), data);
+        Store.save();
+        Store.applyTheme();
+        document.dispatchEvent(new CustomEvent('store:synced'));
+        document.dispatchEvent(new CustomEvent('tasks:changed'));
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message };
+      }
+    }
   };
+
   window.Store = Store;
   Store.applyTheme();
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => Store.applyTheme());

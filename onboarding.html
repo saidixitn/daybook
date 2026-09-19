@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Set up — Daybook</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1A1A18" />
   <script>document.documentElement.dataset.theme = localStorage.getItem('daybook:theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');</script>
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
@@ -12,6 +16,11 @@
 <body>
 <main class="ob">
   <div class="ob-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5.5" fill="currentColor" fill-opacity="0.12"/><path d="M6 10h12M6 14h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14" r="2.2" fill="#F26B3A"/><circle cx="17.5" cy="7.5" r="1.5" fill="#1FA463"/></svg></span>
+      <span style="font-weight:600;letter-spacing:-.02em">Daybook</span>
+    </div>
+
     <div class="ob-progress" id="progress"><i class="on"></i><i></i><i></i></div>
 
     <section class="ob-step active" data-step="0">

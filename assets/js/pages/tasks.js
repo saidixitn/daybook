@@ -24,8 +24,7 @@
   function dayLabel(d) {
     if (d === today) return 'Today';
     if (d === (today + 1) % 7) return 'Tomorrow';
-    const diff = (d - today + 7) % 7;
-    return diff < 7 ? UI.DAYS_LONG[d] : 'Later';
+    return UI.DAYS_LONG[d] || 'Upcoming';
   }
 
   function render() {
@@ -69,6 +68,7 @@
   });
   $('#add-inline').addEventListener('click', () => Shell.addTaskSheet(list === 'today' ? today : undefined));
   document.addEventListener('tasks:changed', () => { renderLists(); render(); });
+  document.addEventListener('store:synced', () => { renderLists(); render(); });
   document.addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); $('#q').focus(); } });
 
   renderLists(); render();

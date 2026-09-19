@@ -27,7 +27,7 @@
   function renderDay() {
     const ev = evts(sel);
     const d = dateOf(sel);
-    $('#day-h').textContent = sel === today ? 'Today' : sel === (today + 1) % 7 && sel > today ? 'Tomorrow' : UI.DAYS_LONG[sel];
+    $('#day-h').textContent = sel === today ? 'Today' : sel === (today + 1) ? 'Tomorrow' : UI.DAYS_LONG[sel];
     $('#day-sub').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
     let html = '';
@@ -70,6 +70,7 @@
     else Shell.taskDetailSheet(t, renderDay);
   });
   document.addEventListener('tasks:changed', renderDay);
+  document.addEventListener('store:synced', () => { renderWeek(); renderDay(); });
 
   /* ---------- Event sheet ---------- */
   const toHM = m => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
