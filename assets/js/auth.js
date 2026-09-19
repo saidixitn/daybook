@@ -222,63 +222,6 @@
     }
   }
 
-  /* ---------- Real Sign in with Apple ---------- */
-  async function startAppleAuth() {
-    const clientId = window.DaybookAuth?.appleClientId;
-    if (!clientId) {
-      window.DaybookAuth?.showSetupModal('apple', () => startAppleAuth());
-      return;
-    }
-
-    if (typeof AppleID === 'undefined' || !AppleID.auth) {
-      UI.toast('Apple Sign-In SDK is loading. Please try again in a moment.', 'info');
-      return;
-    }
-
-    try {
-      AppleID.auth.init({
-        clientId: clientId,
-        scope: 'name email',
-        redirectURI: window.DaybookAuth?.appleRedirectUri || (window.location.origin + '/login'),
-        state: 'daybook_' + Date.now(),
-        usePopup: true
-      });
-
-      const response = await AppleID.auth.signIn();
-      let email = '', name = '';
-
-      if (response.user) {
-        const u = response.user;
-        if (u.name) {
-          name = `${u.name.firstName || ''} ${u.name.lastName || ''}`.trim();
-        }
-        if (u.email) email = u.email;
-      }
-
-      if (response.authorization && response.authorization.id_token) {
-        try {
-          const payload = JSON.parse(
-            atob(response.authorization.id_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
-          );
-          if (!email && payload.email) email = payload.email;
-          if (!name && payload.sub) name = 'Apple User';
-        } catch (e) { /* ignore jwt parse */ }
-      }
-
-      name = name || (email ? email.split('@')[0] : 'Apple User');
-      email = email || 'apple.user@privaterelay.appleid.com';
-
-      UI.toast(`Authenticated with Apple ID`, 'apple');
-      finish(name, email, 'apple');
-    } catch (err) {
-      if (err && (err.error === 'popup_closed_by_user' || err.error === 'user_cancelled_authorize')) {
-        return;
-      }
-      console.error('Apple Sign-In failed', err);
-      UI.toast(`Apple Sign-In error: ${err.error || 'Check Service ID and domain'}`, 'alert');
-    }
-  }
-
   /* ---------- OAuth Redirect Callback Checker ---------- */
   function checkOAuthCallback() {
     if (!window.location.hash) return;
@@ -304,22 +247,6 @@
           console.error('Failed fetching Google userinfo from redirect', err);
           UI.toast('Google verification failed', 'alert');
         });
-      return;
-    }
-
-    // Apple ID id_token returned in hash
-    const idToken = params.get('id_token');
-    if (idToken) {
-      history.replaceState(null, '', window.location.pathname);
-      try {
-        const payload = JSON.parse(atob(idToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-        const email = payload.email || 'apple.user@privaterelay.appleid.com';
-        const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-        UI.toast(`Authenticated with Apple ID`, 'apple');
-        finish(name, email, 'apple');
-      } catch (err) {
-        console.error('Failed decoding Apple id_token from redirect', err);
-      }
     }
   }
 
@@ -329,11 +256,6 @@
   $$('[data-social="Google"]').forEach(b => b.addEventListener('click', (e) => {
     e.preventDefault();
     startGoogleAuth();
-  }));
-
-  $$('[data-social="Apple"]').forEach(b => b.addEventListener('click', (e) => {
-    e.preventDefault();
-    startAppleAuth();
   }));
 
   window.addEventListener('load', () => {

@@ -252,7 +252,7 @@ window.UI = (() => {
       body: `
         <div style="font-size:14px;line-height:1.6;color:var(--ink-2);display:flex;flex-direction:column;gap:12px">
           <p><b style="color:var(--ink)">Daybook is private to your device.</b> We don't store passwords on remote databases.</p>
-          <p>You can sign in directly using any email address or via Google / Apple to continue your calm day.</p>
+          <p>You can sign in directly using any email address or via Google to continue your calm day.</p>
         </div>`,
       primary: { label: 'Continue as Guest', onClick: () => { Store.signIn('Guest', 'guest@daybook.so'); Store.state.onboarded = true; Store.save(); closeSheet(); location.href = '/app'; } },
       secondary: { label: 'Close', onClick: closeSheet }
