@@ -38,6 +38,9 @@ window.Shell = (() => {
   function mount(active, opts = {}) {
     const app = $('#app');
     const initial = (S.user?.name || 'G')[0].toUpperCase();
+    const avatarHtml = S.user?.avatar
+      ? `<img class="avatar" src="${UI.esc(S.user.avatar)}" alt="${UI.esc(S.user?.name || '')}" style="object-fit:cover;width:32px;height:32px;border-radius:50%;" referrerpolicy="no-referrer" />`
+      : `<span class="avatar">${initial}</span>`;
     const isDark = document.documentElement.dataset.theme === 'dark';
 
     const side = `
@@ -63,7 +66,7 @@ window.Shell = (() => {
             <div><b>Theme</b><span>${isDark ? 'Switch to light' : 'Switch to dark'}</span></div>
           </button>
           <a class="user" href="/app/settings">
-            <span class="avatar">${initial}</span>
+            ${avatarHtml}
             <div><b>${UI.esc(S.user?.name || '')}</b><span>${UI.esc(S.user?.email || '')}</span></div>
           </a>
         </div>
@@ -98,7 +101,7 @@ window.Shell = (() => {
         </button>
         <span class="spacer"></span>
         <button class="search" id="open-palette">${icon('search')}<span>Jump to or do anything</span><span class="kbd">⌘K</span></button>
-        <a class="avatar" href="settings.html" aria-label="Settings">${initial}</a>`;
+        <a class="avatar" href="/app/settings" aria-label="Settings" style="overflow:hidden;padding:0;display:inline-flex;align-items:center;justify-content:center;">${avatarHtml}</a>`;
     }
 
     $('#side-new')?.addEventListener('click', () => addTaskSheet());
@@ -107,7 +110,7 @@ window.Shell = (() => {
     $('#open-palette')?.addEventListener('click', UI.openPalette);
     $('#theme-btn')?.addEventListener('click', toggleTheme);
     $('#live-header-pill')?.addEventListener('click', () => {
-      if (active !== 'today') location.href = 'index.html';
+      if (active !== 'today') location.href = '/app';
       else $('#now')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 

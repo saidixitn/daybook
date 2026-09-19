@@ -60,8 +60,8 @@
   };
   $$('.input', form).forEach(i => i.addEventListener('input', () => i.closest('.field')?.classList.remove('invalid')));
 
-  function finish(name, email, provider = 'email') {
-    Store.signIn(name, email, provider);
+  function finish(name, email, provider = 'email', avatar = null) {
+    Store.signIn(name, email, provider, avatar);
     if (!isSignup) {
       Store.state.onboarded = true;
       Store.save();
@@ -108,120 +108,171 @@
     finish(name, email, 'email');
   });
 
-  /* ---------- Google Sign-In Sheet ---------- */
-  function openGoogleAuth() {
-    const defaultEmail = S.user?.email || 'saidixitn@gmail.com';
-    const defaultName = S.user?.name || 'Sai Dixit Naidu';
-    UI.openSheet({
-      title: 'Sign in with Google',
-      body: `
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);cursor:pointer;" id="google-quick-acc">
-            <span class="avatar sm" style="background:linear-gradient(135deg,#4285F4,#34A853)">${defaultName[0].toUpperCase()}</span>
-            <div style="flex:1">
-              <b style="font-size:14px;display:block">${UI.esc(defaultName)}</b>
-              <span class="small muted">${UI.esc(defaultEmail)}</span>
-            </div>
-            ${icon('chevronR')}
-          </div>
-          <div style="position:relative;text-align:center;font-size:12px;color:var(--ink-3);margin:4px 0">
-            <span style="background:var(--surface);padding:0 8px;position:relative;z-index:1">or continue with a different Google account</span>
-          </div>
-          <div class="field">
-            <label for="g-name">Your name</label>
-            <input class="input" id="g-name" value="${UI.esc(defaultName)}" placeholder="e.g. Alex Rivers">
-          </div>
-          <div class="field">
-            <label for="g-email">Google Email</label>
-            <input class="input" id="g-email" type="email" value="${UI.esc(defaultEmail)}" placeholder="you@gmail.com">
-          </div>
-        </div>`,
-      primary: {
-        label: 'Continue with Google',
-        onClick: el => {
-          const name = $('#g-name', el).value.trim() || defaultName;
-          const email = $('#g-email', el).value.trim() || defaultEmail;
-          UI.closeSheet();
-          UI.toast(`Signed in as ${name}`, 'google');
-          finish(name, email, 'google');
-        }
-      },
-      secondary: { label: 'Cancel', onClick: UI.closeSheet },
-      onOpen: el => {
-        $('#google-quick-acc', el)?.addEventListener('click', () => {
-          UI.closeSheet();
-          UI.toast(`Signed in as ${defaultName}`, 'google');
-          finish(defaultName, defaultEmail, 'google');
-        });
-      }
-    });
+  /* ---------- Real Google Sign-In (GIS) ---------- */
+  function handleGoogleCredential(credential) {
+    try {
+      const base64Url = credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const data = JSON.parse(jsonPayload);
+      const name = data.name || data.given_name || data.email.split('@')[0];
+      const email = data.email;
+      const avatar = data.picture || null;
+      UI.toast(`Signed in as ${name}`, 'google');
+      finish(name, email, 'google', avatar);
+    } catch (err) {
+      console.error('Failed to parse Google credential', err);
+      UI.toast('Failed to process Google sign-in', 'alert');
+    }
   }
 
-  /* ---------- Apple Sign-In Sheet ---------- */
-  function openAppleAuth() {
-    const defaultEmail = S.user?.email || 'sam.apple@privaterelay.appleid.com';
-    const defaultName = S.user?.name || 'Sam Apple';
-    let hideEmail = true;
+  function startGoogleAuth() {
+    const clientId = window.DaybookAuth?.googleClientId;
+    if (!clientId) {
+      window.DaybookAuth?.showSetupModal('google', () => startGoogleAuth());
+      return;
+    }
 
-    UI.openSheet({
-      title: 'Sign in with Apple ID',
-      body: `
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface-2);border-radius:14px;">
-            <span class="avatar sm" style="background:#000;color:#fff">${icon('apple')}</span>
-            <div style="flex:1">
-              <b style="font-size:14px;display:block">Daybook via Apple ID</b>
-              <span class="small muted">Private on-device authentication</span>
-            </div>
-          </div>
-          <div class="field">
-            <label>Email privacy</label>
-            <div class="seg" id="apple-privacy-seg" style="width:100%">
-              <button type="button" class="btn" data-v="hide" aria-pressed="true" style="flex:1;height:38px">Hide My Email</button>
-              <button type="button" class="btn" data-v="share" aria-pressed="false" style="flex:1;height:38px">Share My Email</button>
-            </div>
-            <div class="small muted" id="apple-email-preview" style="margin-top:4px">Relay: user${Math.floor(1000 + Math.random()*9000)}@privaterelay.appleid.com</div>
-          </div>
-          <div class="field">
-            <label for="apple-name">Name</label>
-            <input class="input" id="apple-name" value="${UI.esc(defaultName)}" placeholder="Your Name">
-          </div>
-        </div>`,
-      primary: {
-        label: 'Authenticate with Apple',
-        onClick: el => {
-          const name = $('#apple-name', el).value.trim() || 'Apple User';
-          const email = hideEmail ? `relay.${Date.now()}@privaterelay.appleid.com` : (S.user?.email || 'user@icloud.com');
-          UI.closeSheet();
-          UI.toast(`Authenticated with Apple ID`, 'apple');
-          finish(name, email, 'apple');
+    if (typeof google === 'undefined' || !google.accounts) {
+      UI.toast('Google Sign-In SDK is loading. Please try again in a moment.', 'info');
+      return;
+    }
+
+    try {
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'email profile openid',
+        callback: async (resp) => {
+          if (resp.error) {
+            if (resp.error !== 'popup_closed_by_user') {
+              UI.toast(`Google authentication: ${resp.error_description || resp.error}`, 'alert');
+            }
+            return;
+          }
+          if (resp.access_token) {
+            try {
+              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${resp.access_token}` }
+              });
+              if (!res.ok) throw new Error('Userinfo fetch failed');
+              const u = await res.json();
+              UI.toast(`Signed in as ${u.name}`, 'google');
+              finish(u.name || u.email.split('@')[0], u.email, 'google', u.picture || null);
+            } catch (err) {
+              console.error('Failed fetching Google userinfo', err);
+              finish('Google User', 'user@gmail.com', 'google');
+            }
+          }
+        },
+        error_callback: (err) => {
+          if (err && err.type === 'popup_failed_to_open') {
+            UI.toast('Pop-up blocked. Please allow popups for Google sign-in.', 'alert');
+          } else {
+            console.error('Google token error', err);
+          }
         }
-      },
-      secondary: { label: 'Cancel', onClick: UI.closeSheet },
-      onOpen: el => {
-        const seg = $('#apple-privacy-seg', el);
-        const preview = $('#apple-email-preview', el);
-        seg.addEventListener('click', e => {
-          const b = e.target.closest('button');
-          if (!b) return;
-          hideEmail = b.dataset.v === 'hide';
-          $$('button', seg).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-          preview.textContent = hideEmail ? `Relay: user${Math.floor(1000 + Math.random()*9000)}@privaterelay.appleid.com` : (S.user?.email || 'user@icloud.com');
-        });
+      });
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    } catch (e) {
+      console.error('Google Identity init error', e);
+      window.DaybookAuth?.showSetupModal('google', () => startGoogleAuth());
+    }
+  }
+
+  function initGoogleOneTap() {
+    const clientId = window.DaybookAuth?.googleClientId;
+    if (!clientId || typeof google === 'undefined' || !google.accounts?.id) return;
+    try {
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (resp) => {
+          if (resp && resp.credential) {
+            handleGoogleCredential(resp.credential);
+          }
+        }
+      });
+      google.accounts.id.prompt();
+    } catch (e) {
+      console.warn('Google One Tap init deferred', e);
+    }
+  }
+
+  /* ---------- Real Sign in with Apple ---------- */
+  async function startAppleAuth() {
+    const clientId = window.DaybookAuth?.appleClientId;
+    if (!clientId) {
+      window.DaybookAuth?.showSetupModal('apple', () => startAppleAuth());
+      return;
+    }
+
+    if (typeof AppleID === 'undefined' || !AppleID.auth) {
+      UI.toast('Apple Sign-In SDK is loading. Please try again in a moment.', 'info');
+      return;
+    }
+
+    try {
+      AppleID.auth.init({
+        clientId: clientId,
+        scope: 'name email',
+        redirectURI: window.DaybookAuth?.appleRedirectUri || (window.location.origin + '/login'),
+        state: 'daybook_' + Date.now(),
+        usePopup: true
+      });
+
+      const response = await AppleID.auth.signIn();
+      let email = '', name = '';
+
+      if (response.user) {
+        const u = response.user;
+        if (u.name) {
+          name = `${u.name.firstName || ''} ${u.name.lastName || ''}`.trim();
+        }
+        if (u.email) email = u.email;
       }
-    });
+
+      if (response.authorization && response.authorization.id_token) {
+        try {
+          const payload = JSON.parse(
+            atob(response.authorization.id_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
+          );
+          if (!email && payload.email) email = payload.email;
+          if (!name && payload.sub) name = 'Apple User';
+        } catch (e) { /* ignore jwt parse */ }
+      }
+
+      name = name || (email ? email.split('@')[0] : 'Apple User');
+      email = email || 'apple.user@privaterelay.appleid.com';
+
+      UI.toast(`Authenticated with Apple ID`, 'apple');
+      finish(name, email, 'apple');
+    } catch (err) {
+      if (err && (err.error === 'popup_closed_by_user' || err.error === 'user_cancelled_authorize')) {
+        return;
+      }
+      console.error('Apple Sign-In failed', err);
+      UI.toast(`Apple Sign-In error: ${err.error || 'Check Service ID and domain'}`, 'alert');
+    }
   }
 
   // Social button click handlers
   $$('[data-social="Google"]').forEach(b => b.addEventListener('click', (e) => {
     e.preventDefault();
-    openGoogleAuth();
+    startGoogleAuth();
   }));
 
   $$('[data-social="Apple"]').forEach(b => b.addEventListener('click', (e) => {
     e.preventDefault();
-    openAppleAuth();
+    startAppleAuth();
   }));
+
+  window.addEventListener('load', () => {
+    setTimeout(initGoogleOneTap, 600);
+  });
 
   // Legal and recovery links
   $('#forgot-link')?.addEventListener('click', (e) => { e.preventDefault(); UI.showForgotPassword(); });
