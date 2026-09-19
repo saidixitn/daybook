@@ -3,12 +3,14 @@
   const STORAGE_GOOGLE_KEY = 'daybook:google_client_id';
   const STORAGE_APPLE_KEY = 'daybook:apple_client_id';
 
+  const DEFAULT_GOOGLE_CLIENT_ID = '554553161624-4ql4jjrr27l0o2m12a2cllhv95j82hlq.apps.googleusercontent.com';
+
   const DaybookAuth = {
     get googleClientId() {
       return (
         window.DAYBOOK_GOOGLE_CLIENT_ID ||
         localStorage.getItem(STORAGE_GOOGLE_KEY) ||
-        ''
+        DEFAULT_GOOGLE_CLIENT_ID
       );
     },
     get appleClientId() {

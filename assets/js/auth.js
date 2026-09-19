@@ -139,7 +139,14 @@
     }
 
     if (typeof google === 'undefined' || !google.accounts) {
-      UI.toast('Google Sign-In SDK is loading. Please try again in a moment.', 'info');
+      // Direct redirect fallback to real Google OAuth page
+      const redirectUri = window.location.origin + '/login';
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+        'client_id=' + encodeURIComponent(clientId) +
+        '&redirect_uri=' + encodeURIComponent(redirectUri) +
+        '&response_type=token' +
+        '&scope=' + encodeURIComponent('email profile openid') +
+        '&prompt=select_account';
       return;
     }
 
@@ -171,7 +178,14 @@
         },
         error_callback: (err) => {
           if (err && err.type === 'popup_failed_to_open') {
-            UI.toast('Pop-up blocked. Please allow popups for Google sign-in.', 'alert');
+            // Popup blocked: redirect to Google login directly
+            const redirectUri = window.location.origin + '/login';
+            window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+              'client_id=' + encodeURIComponent(clientId) +
+              '&redirect_uri=' + encodeURIComponent(redirectUri) +
+              '&response_type=token' +
+              '&scope=' + encodeURIComponent('email profile openid') +
+              '&prompt=select_account';
           } else {
             console.error('Google token error', err);
           }
@@ -179,8 +193,14 @@
       });
       tokenClient.requestAccessToken({ prompt: 'consent' });
     } catch (e) {
-      console.error('Google Identity init error', e);
-      window.DaybookAuth?.showSetupModal('google', () => startGoogleAuth());
+      console.error('Google Identity init error, redirecting to accounts.google.com', e);
+      const redirectUri = window.location.origin + '/login';
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+        'client_id=' + encodeURIComponent(clientId) +
+        '&redirect_uri=' + encodeURIComponent(redirectUri) +
+        '&response_type=token' +
+        '&scope=' + encodeURIComponent('email profile openid') +
+        '&prompt=select_account';
     }
   }
 
