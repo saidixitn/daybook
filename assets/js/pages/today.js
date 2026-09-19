@@ -28,12 +28,12 @@
         <time>${UI.fmt(e.t)}</time>
         <div><div class="t">${UI.esc(e.title)}</div><div class="d">${e.d} min</div></div>
         <span class="tag">${UI.esc(e.tag)}</span>
-      </li>`).join('') : `<li class="empty"><b>Nothing scheduled today</b>Add an event and it shows up on the ribbon.<br><a class="btn secondary sm" href="schedule.html?new=1">Add event</a></li>`;
+      </li>`).join('') : `<li class="empty"><b>Nothing scheduled today</b>Add an event and it shows up on the ribbon.<br><a class="btn secondary sm" href="/app/schedule?new=1">Add event</a></li>`;
     const mins = ev.reduce((a, e) => a + e.d, 0);
     $('#sched-sub').textContent = `${ev.length} event${ev.length === 1 ? '' : 's'} · ${Math.round(mins / 6) / 10}h planned`;
     tick();
   }
-  $('#timeline').addEventListener('click', e => { const li = e.target.closest('.ev'); if (li) location.href = `schedule.html?event=${li.dataset.id}`; });
+  $('#timeline').addEventListener('click', e => { const li = e.target.closest('.ev'); if (li) location.href = `/app/schedule?event=${li.dataset.id}`; });
 
   /* ---------- Focus button on Today card ---------- */
   $('#today-start-focus')?.addEventListener('click', () => {

@@ -10,21 +10,21 @@ window.Shell = (() => {
     Store.save();
   }
   if (!S.user) {
-    location.replace('../login.html');
+    location.replace('/login');
   }
 
   const PAGES = [
-    { id: 'today', label: 'Today', icon: 'home', href: 'index.html', key: '1' },
-    { id: 'schedule', label: 'Schedule', icon: 'calendar', href: 'schedule.html', key: '2' },
-    { id: 'tasks', label: 'Tasks', icon: 'tasks', href: 'tasks.html', key: '3' },
-    { id: 'insights', label: 'Insights', icon: 'chart', href: 'insights.html', key: '4' },
-    { id: 'settings', label: 'Settings', icon: 'settings', href: 'settings.html', key: '5' },
+    { id: 'today', label: 'Today', icon: 'home', href: '/app', key: '1' },
+    { id: 'schedule', label: 'Schedule', icon: 'calendar', href: '/app/schedule', key: '2' },
+    { id: 'tasks', label: 'Tasks', icon: 'tasks', href: '/app/tasks', key: '3' },
+    { id: 'insights', label: 'Insights', icon: 'chart', href: '/app/insights', key: '4' },
+    { id: 'settings', label: 'Settings', icon: 'settings', href: '/app/settings', key: '5' },
   ];
 
   const openTasksCount = () => S.tasks.filter(t => t.status !== 'done' && t.day === Store.today()).length;
 
   function updateSidebarBadges() {
-    const badge = $('.side-nav a[href="tasks.html"] .n');
+    const badge = $('.side-nav a[href="/app/tasks"] .n, .side-nav a[href="tasks.html"] .n');
     if (badge) badge.textContent = openTasksCount();
   }
 
@@ -42,7 +42,7 @@ window.Shell = (() => {
 
     const side = `
       <aside class="side">
-        <a class="logo" href="index.html" aria-label="Daybook home">
+        <a class="logo" href="/app" aria-label="Daybook home">
           <span class="logo-mark">${icon('logo')}</span>
           <span>Daybook</span>
         </a>
@@ -62,7 +62,7 @@ window.Shell = (() => {
             ${icon(isDark ? 'sun' : 'moon')}
             <div><b>Theme</b><span>${isDark ? 'Switch to light' : 'Switch to dark'}</span></div>
           </button>
-          <a class="user" href="settings.html">
+          <a class="user" href="/app/settings">
             <span class="avatar">${initial}</span>
             <div><b>${UI.esc(S.user?.name || '')}</b><span>${UI.esc(S.user?.email || '')}</span></div>
           </a>
@@ -150,13 +150,13 @@ window.Shell = (() => {
     UI.initPalette([
       { group: 'Actions', label: 'New task', icon: 'plus', hint: 'N', run: () => { UI.closePalette(); addTaskSheet(); } },
       { group: 'Actions', label: 'Start focus session', icon: 'zap', hint: '', run: () => { UI.closePalette(); openFocusMode(); } },
-      { group: 'Actions', label: 'New event', icon: 'calendar', hint: '', run: () => { UI.closePalette(); if (window.addEventSheet) addEventSheet(); else location.href = 'schedule.html?new=1'; } },
+      { group: 'Actions', label: 'New event', icon: 'calendar', hint: '', run: () => { UI.closePalette(); if (window.addEventSheet) addEventSheet(); else location.href = '/app/schedule?new=1'; } },
       { group: 'Actions', label: 'Toggle dark theme', icon: 'moon', hint: 'T', run: () => { UI.closePalette(); toggleTheme(); } },
-      { group: 'Actions', label: 'Sign out', icon: 'logout', run: () => { Store.signOut(); location.href = '../login.html'; } },
+      { group: 'Actions', label: 'Sign out', icon: 'logout', run: () => { Store.signOut(); location.href = '/login'; } },
       ...PAGES.map(p => ({ group: 'Go to', label: p.label, icon: p.icon, hint: p.key, run: () => location.href = p.href })),
-      { group: 'Go to', label: 'Landing page', icon: 'layers', run: () => location.href = '../index.html' },
+      { group: 'Go to', label: 'Landing page', icon: 'layers', run: () => location.href = '/' },
     ], q => S.tasks.filter(t => t.title.toLowerCase().includes(q)).slice(0, 6).map(t => ({
-      group: 'Tasks', label: t.title, icon: t.status === 'done' ? 'check' : 'tasks', hint: t.time != null ? UI.fmt(t.time) : '', run: () => location.href = `tasks.html?task=${t.id}`,
+      group: 'Tasks', label: t.title, icon: t.status === 'done' ? 'check' : 'tasks', hint: t.time != null ? UI.fmt(t.time) : '', run: () => location.href = `/app/tasks?task=${t.id}`,
     })));
 
     document.addEventListener('keydown', e => {

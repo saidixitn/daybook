@@ -2,6 +2,28 @@
   "version": 2,
   "outputDirectory": "public",
   "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/onboarding", "destination": "/onboarding.html" },
+    { "source": "/app", "destination": "/app/index.html" },
+    { "source": "/app/schedule", "destination": "/app/schedule.html" },
+    { "source": "/app/tasks", "destination": "/app/tasks.html" },
+    { "source": "/app/insights", "destination": "/app/insights.html" },
+    { "source": "/app/settings", "destination": "/app/settings.html" }
+  ],
+  "redirects": [
+    { "source": "/login.html", "destination": "/login", "permanent": true },
+    { "source": "/signup.html", "destination": "/signup", "permanent": true },
+    { "source": "/onboarding.html", "destination": "/onboarding", "permanent": true },
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/app/index.html", "destination": "/app", "permanent": true },
+    { "source": "/app/schedule.html", "destination": "/app/schedule", "permanent": true },
+    { "source": "/app/tasks.html", "destination": "/app/tasks", "permanent": true },
+    { "source": "/app/insights.html", "destination": "/app/insights", "permanent": true },
+    { "source": "/app/settings.html", "destination": "/app/settings", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

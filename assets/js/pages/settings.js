@@ -159,6 +159,6 @@
 
   $('#signout').addEventListener('click', () => {
     Store.signOut();
-    location.href = '../login.html';
+    location.href = '/login';
   });
 })();

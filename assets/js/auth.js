@@ -21,7 +21,7 @@
       banner.style.cssText = 'padding:14px 18px;margin-bottom:20px;background:var(--surface-2);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;';
       banner.innerHTML = `
         <div>Signed in as <b>${UI.esc(S.user.name)}</b></div>
-        <a class="btn primary sm" href="app/index.html">Open Daybook →</a>`;
+        <a class="btn primary sm" href="/app">Open Daybook →</a>`;
       card.insertBefore(banner, card.firstChild);
     }
   }
@@ -30,17 +30,21 @@
   const form = $('#form');
   const isSignup = form.dataset.mode === 'signup';
   const eye = $('#eye'), pw = $('#pw');
-  if (eye) {
-    eye.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  if (eye && pw) {
+    const updateEye = () => {
+      const isText = pw.type === 'text';
+      eye.innerHTML = icon(isText ? 'eyeOff' : 'eye');
+      eye.setAttribute('aria-label', isText ? 'Hide password' : 'Show password');
+    };
+    updateEye();
     eye.addEventListener('click', () => {
-      const show = pw.type === 'password';
-      pw.type = show ? 'text' : 'password';
-      eye.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+      updateEye();
     });
   }
 
   const strength = $('#strength');
-  if (strength) pw.addEventListener('input', () => {
+  if (strength && pw) pw.addEventListener('input', () => {
     const v = pw.value;
     let s = 0;
     if (v.length >= 8) s++;
@@ -58,6 +62,10 @@
 
   function finish(name, email, provider = 'email') {
     Store.signIn(name, email, provider);
+    if (!isSignup) {
+      Store.state.onboarded = true;
+      Store.save();
+    }
     const btn = $('#submit');
     if (btn) {
       btn.disabled = true;
@@ -65,8 +73,8 @@
     }
     UI.sound.playChime();
     setTimeout(() => {
-      location.href = isSignup || !S.onboarded ? 'onboarding.html' : 'app/index.html';
-    }, 550);
+      location.href = isSignup ? '/onboarding' : '/app';
+    }, 450);
   }
 
   form.addEventListener('submit', e => {
@@ -83,11 +91,19 @@
     setInvalid('email', !okEmail);
     setInvalid('pw', !okPw);
     if (!okEmail || !okPw || !okName) {
-      $('.field.invalid .input')?.focus();
+      const firstBad = $('.field.invalid');
+      if (firstBad) {
+        firstBad.classList.remove('shake');
+        void firstBad.offsetWidth;
+        firstBad.classList.add('shake');
+        firstBad.querySelector('.input')?.focus();
+      }
       return;
     }
     if (!isSignup) {
-      name = S.user?.name || email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      name = (S.user && S.user.email === email && S.user.name)
+        ? S.user.name
+        : email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
     finish(name, email, 'email');
   });

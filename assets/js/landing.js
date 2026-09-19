@@ -12,13 +12,13 @@
       if (loginBtn) loginBtn.style.display = 'none';
       if (signupBtn) {
         signupBtn.textContent = 'Open Daybook →';
-        signupBtn.href = 'app/index.html';
+        signupBtn.href = '/app';
       }
     }
     const heroStart = $('#hero-start');
     if (heroStart) {
       heroStart.textContent = 'Open Daybook →';
-      heroStart.href = 'app/index.html';
+      heroStart.href = '/app';
     }
   }
 

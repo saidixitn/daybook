@@ -54,13 +54,13 @@
         nameIn.classList.add('shake');
         return;
       }
-      Store.signIn(n, S.user?.email || '');
+      Store.signIn(n, S.user?.email || '', S.user?.provider || 'email', S.user?.avatar || null);
     }
     if (step === 1) { S.prefs.interests = selected(); Store.save(); }
     if (step === 2) {
       S.prefs.dayStart = start; S.prefs.dayEnd = end; S.onboarded = true; Store.save();
       next.disabled = true; next.textContent = 'Opening…';
-      setTimeout(() => location.href = 'app/index.html', 450);
+      setTimeout(() => location.href = '/app', 450);
       return;
     }
     show(step + 1);

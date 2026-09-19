@@ -20,7 +20,7 @@
 .auth-visual .foot-note { color: rgba(255,255,255,.45); font-size: var(--fs-sm); position: relative; }
 
 /* Right: form */
-.auth-form { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+.auth-form { position: relative; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
 .auth-card { width: min(400px, 100%); }
 .auth-card h1 { font-size: var(--fs-2xl); letter-spacing: -.03em; margin-bottom: 8px; }
 .auth-card .lead { color: var(--ink-2); margin-bottom: 28px; }
