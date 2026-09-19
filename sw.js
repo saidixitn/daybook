@@ -1,5 +1,5 @@
-// Daybook Service Worker — offline caching, clean URLs & instant launch
-const CACHE_NAME = 'daybook-cache-v2';
+// Daybook Service Worker — Network-First for dynamic updates, offline fallback
+const CACHE_NAME = 'daybook-cache-v5';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -10,7 +10,7 @@ const PRECACHE_URLS = [
   '/onboarding',
   '/onboarding.html',
   '/app',
-  '/app/index.html',
+  '/app.html',
   '/app/schedule',
   '/app/schedule.html',
   '/app/tasks',
@@ -30,6 +30,7 @@ const PRECACHE_URLS = [
   '/assets/js/ui.js',
   '/assets/js/shell.js',
   '/assets/js/landing.js',
+  '/assets/js/auth-config.js',
   '/assets/js/auth.js',
   '/assets/js/onboarding.js',
   '/assets/js/pages/today.js',
@@ -40,8 +41,11 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS.map(u => new Request(u, { cache: 'reload' })))).catch(() => {}).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(PRECACHE_URLS.map((u) => new Request(u, { cache: 'reload' })))
+    ).catch(() => {})
   );
 });
 
@@ -55,25 +59,26 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Network-first: Always attempt fresh network fetch so user gets latest code immediately
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const networked = fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => {
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return networkResponse;
+      })
+      .catch(() =>
+        caches.match(event.request).then((cached) => {
           if (cached) return cached;
           const url = new URL(event.request.url);
-          if (url.pathname.startsWith('/app')) return caches.match('/app') || caches.match('/app/index.html');
+          if (url.pathname.startsWith('/app')) return caches.match('/app') || caches.match('/app.html');
           if (url.pathname === '/login') return caches.match('/login') || caches.match('/login.html');
           if (url.pathname === '/signup') return caches.match('/signup') || caches.match('/signup.html');
           return caches.match('/') || caches.match('/index.html');
-        });
-      return cached || networked;
-    })
+        })
+      )
   );
 });

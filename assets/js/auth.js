@@ -259,6 +259,52 @@
     }
   }
 
+  /* ---------- OAuth Redirect Callback Checker ---------- */
+  function checkOAuthCallback() {
+    if (!window.location.hash) return;
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+
+    // Google OAuth access_token returned in hash
+    const accessToken = params.get('access_token');
+    if (accessToken) {
+      history.replaceState(null, '', window.location.pathname);
+      UI.toast('Verifying with Google…');
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+        .then(r => r.json())
+        .then(u => {
+          if (u && u.email) {
+            UI.toast(`Welcome, ${u.name}!`, 'google');
+            finish(u.name || u.email.split('@')[0], u.email, 'google', u.picture || null);
+          }
+        })
+        .catch(err => {
+          console.error('Failed fetching Google userinfo from redirect', err);
+          UI.toast('Google verification failed', 'alert');
+        });
+      return;
+    }
+
+    // Apple ID id_token returned in hash
+    const idToken = params.get('id_token');
+    if (idToken) {
+      history.replaceState(null, '', window.location.pathname);
+      try {
+        const payload = JSON.parse(atob(idToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        const email = payload.email || 'apple.user@privaterelay.appleid.com';
+        const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        UI.toast(`Authenticated with Apple ID`, 'apple');
+        finish(name, email, 'apple');
+      } catch (err) {
+        console.error('Failed decoding Apple id_token from redirect', err);
+      }
+    }
+  }
+
+  checkOAuthCallback();
+
   // Social button click handlers
   $$('[data-social="Google"]').forEach(b => b.addEventListener('click', (e) => {
     e.preventDefault();
