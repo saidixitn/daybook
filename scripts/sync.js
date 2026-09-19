@@ -1,9 +1,12 @@
-// Sync script: copies web source files into www/ for Capacitor and mobile packaging
+// Sync script: copies web source files into www/ for Capacitor and public/ for Vercel deployment
 const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const dest = path.resolve(root, 'www');
+const targets = [
+  path.resolve(root, 'www'),
+  path.resolve(root, 'public')
+];
 
 const itemsToCopy = [
   'index.html',
@@ -30,8 +33,11 @@ function copyRecursive(src, dst) {
   }
 }
 
-console.log('Syncing web files to www/...');
-for (const item of itemsToCopy) {
-  copyRecursive(path.join(root, item), path.join(dest, item));
+for (const dest of targets) {
+  const name = path.basename(dest);
+  console.log(`Syncing web files to ${name}/...`);
+  for (const item of itemsToCopy) {
+    copyRecursive(path.join(root, item), path.join(dest, item));
+  }
+  console.log(`✓ Successfully synced to ${name}/`);
 }
-console.log('✓ Successfully synced to www/');
